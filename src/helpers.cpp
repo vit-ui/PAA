@@ -1,6 +1,9 @@
 #include <vector>
 #include <utility>
 #include <random>
+#include <climits>
+
+const int INFINITO = INT_MAX;
 
 // Função que gera um grafo para teste usando lista de adjacencia.
 std::vector<std::vector<std::pair<int, int>>> geraGrafo(int tamanho, double densidade){
@@ -26,4 +29,27 @@ std::vector<std::vector<std::pair<int, int>>> geraGrafo(int tamanho, double dens
         grafo[origem].emplace_back(chegada, peso);
     }
     return grafo;
+}
+
+int minDist(const std::vector<int>& minDistancia, const std::vector<bool>& foiFechado){
+    int indiceVerticeMinimo = -1;
+    int distanciaMinimaAtual = INFINITO;
+
+    for(int i = 0; i < minDistancia.size(); i++){
+        if(!foiFechado[i] && minDistancia[i] < distanciaMinimaAtual){
+            distanciaMinimaAtual = minDistancia[i];
+            indiceVerticeMinimo = i;
+        }
+    }
+    return indiceVerticeMinimo;
+}
+
+
+std::vector<int> vizinhos(const std::vector<std::vector<int>>& grafo, const std::vector<bool>& foiFechado, int verticeAtual){
+    std::vector<int> vizinhos;
+    for(int i = 0; i < grafo.size();i++){
+        if(!foiFechado[i] && grafo[verticeAtual][i] != INFINITO)
+            vizinhos.emplace_back(i);
+    }
+    return vizinhos;
 }
