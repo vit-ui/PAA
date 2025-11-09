@@ -33,10 +33,10 @@ std::pair<std::vector<int>, std::vector<int>> dijkstra(const std::vector<std::ve
     int tamanho = grafo.size();
 
     std::vector<int> minDistancia(tamanho, INFINITO); //dt
-    std::vector<int> predecessores(tamanho, 0); //rot
+    std::vector<int> predecessores(tamanho, -1); //rot
     std::vector<bool> foiFechado(tamanho, false); // fechado -> true | aberto -> false
 
-    minDistancia[0] = predecessores[0] = 0;
+    minDistancia[0] = 0;
 
     int numFechados = 0;
     while(numFechados != tamanho){
