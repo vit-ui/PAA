@@ -1,13 +1,18 @@
+#pragma once
 #include <vector>
 #include <utility>
 #include <random>
 #include <climits>
+#include <fstream>
+#include <sstream>  // Para std::stringstream
+#include <iomanip>  // Para std::setprecision e std::fixed
+#include "../lib/json.hpp" // lib nlohmann/json
 
-const int INFINITO = INT_MAX;
+static const int INFINITO = INT_MAX;
 
 // Função que gera um grafo para teste usando lista de adjacencia.
 std::vector<std::vector<std::pair<int, int>>> geraGrafo(int tamanho, double densidade){
-    // criando um gerador de numeros aleatórios usando static para persistir durante varias calls a função
+    // criando um gerador de numeros aleatórios usando static para persistir durante várias calls a função
     static std::random_device semente;
     static std::mt19937 motor(semente());
     std::uniform_int_distribution<int> escolheVertice(0, tamanho-1);
@@ -31,6 +36,43 @@ std::vector<std::vector<std::pair<int, int>>> geraGrafo(int tamanho, double dens
     return grafo;
 }
 
+// Função que coloca grafos em formato json em um arquivo txt
+void salvaGrafo(int tamanho, double densidade, const std::vector<std::vector<std::pair<int, int>>>& grafo){
+    // Preparando variáveis para a operação no arquivo   
+    std::string caminhoGrafo = "../grafos/grafos.txt";
+    nlohmann::json Grafos;
+
+    // colocando os grafos existentes na memoria para atualizar o arquivo
+    std::ifstream arquivoGrafosLeitura(caminhoGrafo);
+    try{
+        Grafos = nlohmann::json::parse(arquivoGrafosLeitura);
+    } 
+    catch(const std::exception& e){
+        Grafos = nlohmann::json::array();
+    }
+    arquivoGrafosLeitura.close();
+
+    // construindo o novo objeto json(grafo gerado)
+    nlohmann::json novoGrafo;
+    static int counter = 1;
+    std::stringstream ss;
+    ss << "Grafo_N" << tamanho << "D" << std::fixed << std::setprecision(2) << densidade << "_" << counter++;
+    novoGrafo["id"] = ss.str();
+    novoGrafo["parametros"]["tamanho"] = tamanho;
+    novoGrafo["parametros"]["densidade"] = densidade;
+    novoGrafo["grafo"] = grafo;
+    novoGrafo["solucao"]["distancias"] = json::array(); // dt
+    novoGrafo["solucao"]["predecessores"] = json::array(); // rot
+
+    // atualizando lista de grafos
+    Grafos.push_back(novoGrafo);
+
+    // Colocando lista atualizada no arquivo
+    std::ofstream arquivoGrafosEscrita(caminhoGrafo);
+    arquivoGrafosEscrita << Grafos.dump(4);
+}
+
+// minDist e vizinhos não são mais utilizadas.
 int minDist(const std::vector<int>& minDistancia, const std::vector<bool>& foiFechado){
     int indiceVerticeMinimo = -1;
     int distanciaMinimaAtual = INFINITO;
@@ -43,7 +85,6 @@ int minDist(const std::vector<int>& minDistancia, const std::vector<bool>& foiFe
     }
     return indiceVerticeMinimo;
 }
-
 
 std::vector<int> vizinhos(const std::vector<std::vector<int>>& grafo, const std::vector<bool>& foiFechado, int verticeAtual){
     std::vector<int> vizinhos;

@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <utility>
 #include <iostream>
+#include "./helpers.cpp"
 
-const int INFINITO = INT_MAX;
 using Grafo = std::vector<std::vector<std::pair<int, int>>>;
 
 std::pair<std::vector<int>, std::vector<int>> dijkstra(const std::vector<std::vector<std::pair<int, int>>>& grafo){
@@ -47,28 +47,31 @@ int main() {
     // 1. Define o tamanho do nosso grafo de exemplo
     int tamanho = 4;
 
-    // 2. Define a Lista de Adjacência (NOVA FORMA)
-    //    Isso cria um vetor com 4 posições, cada uma
-    //    contendo um 'std::vector<Par>' vazio.
-    Grafo grafo(tamanho);
+    // 2. Gera o grafo aleatório
+    auto grafo = geraGrafo(tamanho, 0.5); // (Use os N e densidade que quiser)
 
-    // 3. Adiciona as arestas (NOVA FORMA)
-    //    Não preenchemos com INFINITO, apenas adicionamos as arestas
-    //    que existem usando .push_back() ou .emplace_back().
-    //    (Usando o grafo com índice 0-3)
+    // =======================================================
+    // == 3. IMPRIME O GRAFO GERADO (O NOVO BLOCO) ==
+    // =======================================================
+    std::cout << "--- Grafo Gerado (Entrada) ---" << std::endl;
+    for (int i = 0; i < tamanho; ++i) {
+        std::cout << "Vertice " << i << ": ";
+        
+        // Verifica se o vértice não tem arestas de saída
+        if (grafo[i].empty()) {
+            std::cout << "(nenhuma aresta)";
+        }
 
-    // De 0 para 1: Custo 5
-    grafo[0].emplace_back(1, 5);
-    // De 0 para 2: Custo 2
-    grafo[0].emplace_back(2, 2);
-
-    // De 1 para 3: Custo 6
-    grafo[1].emplace_back(3, 6);
-
-    // De 2 para 1: Custo 1
-    grafo[2].emplace_back(1, 1);
-    // De 2 para 3: Custo 10
-    grafo[2].emplace_back(3, 10);
+        // Itera sobre a lista de pares {destino, peso}
+        for (const auto& parVizinho : grafo[i]) {
+            int vizinho = parVizinho.first;
+            int peso = parVizinho.second;
+            std::cout << "-> (" << vizinho << ", Peso: " << peso << ") ";
+        }
+        std::cout << std::endl; // Pula linha para o próximo vértice
+    }
+    std::cout << "-------------------------------------" << std::endl;
+    // =======================================================
 
     // 4. Chama o algoritmo de Dijkstra (esta chamada não muda)
     auto resultado = dijkstra(grafo);
