@@ -1,0 +1,4 @@
+grafos/
+.vscode/
+*.exe
+!geraGrafosTestes.exe
