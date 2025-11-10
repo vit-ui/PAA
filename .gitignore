@@ -1,4 +1,4 @@
 grafos/
-.vscode/
+.vscode
 *.exe
-!geraGrafosTestes.exe
+!src/geraGrafosTestes.exe
