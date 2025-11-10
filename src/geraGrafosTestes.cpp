@@ -1,8 +1,7 @@
 #include <iostream>
 #include "./dijsktra.cpp"
 #include "./helpers.cpp"
-int main()
-{
+int main() {
     int tamanho = 3;
     double densidade = 0.7;
     nlohmann::json Grafos;
@@ -10,8 +9,7 @@ int main()
     std::ofstream cleaner(caminhoGrafo);
     cleaner.close();
 
-    for (int i = 0; i < 10; i++)
-    {
+    for (int i = 0; i < 10; i++) {
         if (i % 2 == 0) tamanho++;
 
         auto grafo = geraGrafo(tamanho, densidade);
@@ -19,21 +17,17 @@ int main()
     }
 
     std::ifstream arquivoGrafosLeitura(caminhoGrafo);
-    try
-    {
+    try {
         Grafos = nlohmann::json::parse(arquivoGrafosLeitura);
     }
-    catch (const std::exception &e)
-    {
+    catch (const std::exception &e) {
         Grafos = nlohmann::json::array();
     }
     arquivoGrafosLeitura.close();
 
-    for (auto &grafo : Grafos)
-    {
+    for (auto &grafo : Grafos) {
         auto resposta = dijkstra(grafo["grafo"]);
-        // --- Substitua a linha 33 por este bloco ---
-
+        
         // 1. Imprime o cabeçalho de Distâncias
         std::cout << "DT: ";
 

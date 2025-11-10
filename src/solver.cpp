@@ -3,19 +3,10 @@
 #include <climits>   // Para INT_MAX
 #include <iostream>  // (Apenas para o main de exemplo)
 
-// --- Definições ---
-// Estas são as mesmas definições que você usa no seu
-// programa principal.
-
-// (Assumindo que INFINITO está definido em algum lugar, mas 
-// é mais seguro redefini-lo aqui caso seja um arquivo separado)
 const int INFINITO = INT_MAX;
 
 using Par = std::pair<int, int>;           // {Destino, Peso}
 using Grafo = std::vector<std::vector<Par>>; // Lista de Adjacência
-
-// --- Fim das Definições ---
-
 
 /**
  * SOLVER (ORÁCULO)
@@ -47,14 +38,10 @@ std::pair<std::vector<int>, std::vector<int>> bellmanFord(const Grafo& grafo) {
                 
                 // Se a origem 'u' ainda é inalcançável, 
                 // não podemos relaxar a partir dela.
-                if (minDistancia[u] == INFINITO) {
-                    continue;
-                }
+                if (minDistancia[u] == INFINITO) continue;
 
                 // Verificação de overflow (igual ao Dijkstra)
-                if (minDistancia[u] > INFINITO - peso) {
-                    continue;
-                }
+                if (minDistancia[u] > INFINITO - peso) continue;
 
                 int distanciaNova = minDistancia[u] + peso;
 

@@ -9,12 +9,10 @@
 #include "../lib/json.hpp" // lib nlohmann/json
 #include "./solver.cpp"
 
-// static const int INFINITO = INT_MAX;
-
 // Função que gera um grafo para teste usando lista de adjacencia.
 std::vector<std::vector<std::pair<int, int>>> geraGrafo(int tamanho, double densidade)
 {
-    // criando um gerador de numeros aleatórios usando static para persistir durante várias calls a função
+    // Criando um gerador de numeros aleatórios usando static para persistir durante várias calls a função
     static std::random_device semente;
     static std::mt19937 motor(semente());
     std::uniform_int_distribution<int> escolheVertice(0, tamanho - 1);
@@ -31,8 +29,7 @@ std::vector<std::vector<std::pair<int, int>>> geraGrafo(int tamanho, double dens
         int chegada = escolheVertice(motor);
         int peso = escolhePeso(motor);
 
-        if (origem == chegada)
-            continue;
+        if (origem == chegada) continue;
 
         // --- A NOVA LÓGICA DE VERIFICAÇÃO ---
         bool arestaJaExiste = false;
@@ -47,10 +44,7 @@ std::vector<std::vector<std::pair<int, int>>> geraGrafo(int tamanho, double dens
         }
 
         // 3. Só adicione a aresta se ela NÃO foi encontrada
-        if (!arestaJaExiste)
-        {
-            grafo[origem].emplace_back(chegada, peso);
-        }
+        if (!arestaJaExiste) grafo[origem].emplace_back(chegada, peso);
     }
     return grafo;
 }
@@ -64,12 +58,10 @@ void salvaGrafo(int tamanho, double densidade, const std::vector<std::vector<std
 
     // colocando os grafos existentes na memoria para atualizar o arquivo
     std::ifstream arquivoGrafosLeitura(caminhoGrafo);
-    try
-    {
+    try{
         Grafos = nlohmann::json::parse(arquivoGrafosLeitura);
     }
-    catch (const std::exception &e)
-    {
+    catch (const std::exception &e){
         Grafos = nlohmann::json::array();
     }
     arquivoGrafosLeitura.close();
@@ -97,15 +89,12 @@ void salvaGrafo(int tamanho, double densidade, const std::vector<std::vector<std
 }
 
 // minDist e vizinhos não são mais utilizadas.
-int minDist(const std::vector<int> &minDistancia, const std::vector<bool> &foiFechado)
-{
+int minDist(const std::vector<int> &minDistancia, const std::vector<bool> &foiFechado){
     int indiceVerticeMinimo = -1;
     int distanciaMinimaAtual = INFINITO;
 
-    for (int i = 0; i < minDistancia.size(); i++)
-    {
-        if (!foiFechado[i] && minDistancia[i] < distanciaMinimaAtual)
-        {
+    for (int i = 0; i < minDistancia.size(); i++){
+        if (!foiFechado[i] && minDistancia[i] < distanciaMinimaAtual){
             distanciaMinimaAtual = minDistancia[i];
             indiceVerticeMinimo = i;
         }
@@ -113,11 +102,9 @@ int minDist(const std::vector<int> &minDistancia, const std::vector<bool> &foiFe
     return indiceVerticeMinimo;
 }
 
-std::vector<int> vizinhos(const std::vector<std::vector<int>> &grafo, const std::vector<bool> &foiFechado, int verticeAtual)
-{
+std::vector<int> vizinhos(const std::vector<std::vector<int>> &grafo, const std::vector<bool> &foiFechado, int verticeAtual){
     std::vector<int> vizinhos;
-    for (int i = 0; i < grafo.size(); i++)
-    {
+    for (int i = 0; i < grafo.size(); i++){
         if (!foiFechado[i] && grafo[verticeAtual][i] != INFINITO)
             vizinhos.emplace_back(i);
     }
@@ -127,71 +114,46 @@ std::vector<int> vizinhos(const std::vector<std::vector<int>> &grafo, const std:
 // Apelido para a biblioteca JSON
 using json = nlohmann::json;
 
-// (Certifique-se de que INFINITO esteja acessível aqui,
-// provavelmente do seu header)
-// static const int INFINITO = INT_MAX;
-
-/**
- * @brief Lê o arquivo JSON, analisa (parse) os grafos,
- * e imprime tanto o GRAFO quanto a SOLUÇÃO no console.
- * @param caminhoArquivo O caminho para o arquivo (ex: "../grafos/grafos.txt")
- */
-void imprimeArquivo(const std::string &caminhoArquivo)
-{
-
+void imprimeArquivo(const std::string &caminhoArquivo){
     // 1. Abre o arquivo para leitura
     std::ifstream arquivoEntrada(caminhoArquivo);
-    if (!arquivoEntrada.is_open())
-    {
-        std::cerr << "ERRO: Nao foi possivel abrir o arquivo: "
-                  << caminhoArquivo << std::endl;
+    if (!arquivoEntrada.is_open()){
+        std::cerr << "ERRO: Nao foi possivel abrir o arquivo: " << caminhoArquivo << std::endl;
         return;
     }
 
     // 2. Analisa (Parse) o JSON
     json listaDeTestes;
-    try
-    {
+    try {
         listaDeTestes = json::parse(arquivoEntrada);
-        if (!listaDeTestes.is_array())
-        {
+        if (!listaDeTestes.is_array()){
             std::cerr << "ERRO: O JSON nao e um array." << std::endl;
             return;
         }
     }
-    catch (json::parse_error &e)
-    {
+    catch (json::parse_error &e){
         std::cerr << "ERRO: Falha ao analisar o JSON. " << e.what() << std::endl;
         return;
     }
     arquivoEntrada.close();
 
     // 3. Itera sobre cada "teste" no array JSON
-    for (const auto &teste : listaDeTestes)
-    {
-
+    for (const auto &teste : listaDeTestes){
         // Imprime o cabeçalho de cada grafo
-        std::cout << "--- Grafo Gerado (Entrada) ID: "
-                  << teste["id"] << " ---" << std::endl;
+        std::cout << "--- Grafo Gerado (Entrada) ID: " << teste["id"] << " ---" << std::endl;
 
         const auto &grafoJSON = teste["grafo"];
 
         // 4. Itera sobre cada VÉRTICE no grafoJSON (para imprimir o grafo)
-        for (size_t i = 0; i < grafoJSON.size(); ++i)
-        {
+        for (size_t i = 0; i < grafoJSON.size(); ++i){
             std::cout << "Vertice " << i << ": ";
             const auto &listaVizinhos = grafoJSON[i];
 
-            if (listaVizinhos.empty())
-            {
-                std::cout << "(nenhuma aresta)";
-            }
+            if (listaVizinhos.empty()) std::cout << "(nenhuma aresta)";
 
-            for (const auto &vizinhoPar : listaVizinhos)
-            {
+            for (const auto &vizinhoPar : listaVizinhos){
                 // vizinhoPar[0] = destino, vizinhoPar[1] = peso
-                std::cout << "-> (" << vizinhoPar[0] << ", Peso: "
-                          << vizinhoPar[1] << ") ";
+                std::cout << "-> (" << vizinhoPar[0] << ", Peso: " << vizinhoPar[1] << ") ";
             }
             std::cout << std::endl;
         }
@@ -207,12 +169,9 @@ void imprimeArquivo(const std::string &caminhoArquivo)
         std::cout << "Solucao:" << std::endl;
 
         // Verifica se a solução está vazia (placeholder)
-        if (solucao["distancias"].empty())
-        {
+        if (solucao["distancias"].empty()) 
             std::cout << "(Solucao pendente ou nao calculada)" << std::endl;
-        }
-        else
-        {
+        else {
             // Imprime a tabela de resultados
             std::cout << "Vertice | Distancia | Predecessor" << std::endl;
             std::cout << "-------------------------------------" << std::endl;
@@ -221,22 +180,15 @@ void imprimeArquivo(const std::string &caminhoArquivo)
             const auto &predecessores = solucao["predecessores"];
 
             // Assumimos que o tamanho dos arrays de solução é o mesmo
-            for (size_t i = 0; i < distancias.size(); ++i)
-            {
+            for (size_t i = 0; i < distancias.size(); ++i){
                 std::cout << "   " << i << "    |     ";
 
                 // Tenta pegar o valor 'int' da distância
                 // (Usando .get<int>() para converter do JSON)
                 int dist = distancias[i].get<int>();
 
-                if (dist == INFINITO)
-                {
-                    std::cout << "INF";
-                }
-                else
-                {
-                    std::cout << dist;
-                }
+                if (dist == INFINITO) std::cout << "INF";
+                else std::cout << dist;
 
                 std::cout << "     |      ";
 
@@ -246,7 +198,6 @@ void imprimeArquivo(const std::string &caminhoArquivo)
                 std::cout << std::endl;
             }
         }
-        std::cout << "======================================" << std::endl
-                  << std::endl;
+        std::cout << "======================================" << std::endl << std::endl;
     }
 }
