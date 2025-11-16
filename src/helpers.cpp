@@ -9,6 +9,7 @@
 #include "../lib/json.hpp" // lib nlohmann/json
 #include "./solver.cpp"
 
+
 // Função que gera um grafo para teste usando lista de adjacencia.
 std::vector<std::vector<std::pair<int, int>>> geraGrafo(int tamanho, double densidade)
 {
