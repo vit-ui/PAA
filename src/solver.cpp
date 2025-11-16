@@ -1,9 +1,9 @@
 #include <vector>
 #include <utility>   // Para std::pair
-#include <climits>   // Para INT_MAX
+#include <limits>   // Para INT_MAX
 #include <iostream>  // (Apenas para o main de exemplo)
 
-const int INFINITO = INT_MAX;
+const int INFINITO = std::numeric_limits<double>::infinity();
 
 using Par = std::pair<int, int>;           // {Destino, Peso}
 using Grafo = std::vector<std::vector<Par>>; // Lista de Adjacência

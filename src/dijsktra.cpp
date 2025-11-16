@@ -1,6 +1,6 @@
 #include <vector>
 #include <queue>
-#include <climits>
+#include <limits>
 #include <algorithm>
 #include <utility>
 #include <iostream>
@@ -8,7 +8,7 @@
 
 using Grafo = std::vector<std::vector<std::pair<int, int>>>;
 
-std::pair<std::vector<int>, std::vector<int>> dijkstra(const std::vector<std::vector<std::pair<int, int>>>& grafo){
+std::pair<std::vector<int>, std::vector<int>> dijkstra(const Grafo& grafo){
     int tamanho = grafo.size();
 
     std::vector<int> minDistancia(tamanho, INFINITO); //dt
