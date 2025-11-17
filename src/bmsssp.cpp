@@ -103,3 +103,48 @@ std::pair<std::vector<int>, std::vector<int>> findPivots(const Grafo &grafo, std
 
     return std::make_pair(pivotsRetorno, verticesAlcancadosWRetorno);
 }
+
+std::pair<double, std::vector<int>> baseCase(const Grafo& grafo, std::vector<double>& distD, double limiteB, int pivoFonteS, int maxContagemK) {
+    std::vector<int> verticesCompletosU_0; // a primeira iteração do while adiciona pivoFonteS
+    // fila de prioridades H: (distancia, vertice)
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> filaFronteiraH;
+    filaFronteiraH.push({ distD[pivoFonteS], pivoFonteS });
+
+    while (!filaFronteiraH.empty() && verticesCompletosU_0.size() < maxContagemK + 1) {
+        auto minPar = filaFronteiraH.top();
+        filaFronteiraH.pop();
+
+        int pesoVerticeAtual = minPar.first;
+        int verticeAtualU = minPar.second;
+        if (pesoVerticeAtual > distD[verticeAtualU]) continue; // isso cuida de duplicatas obsoletas na fila
+
+        verticesCompletosU_0.push_back(verticeAtualU); // cada vertice é adicionado somente uma vez por causa da verificação acima
+
+        for (auto& parVizinho : grafo[verticeAtualU]) {
+            int vizinho = parVizinho.first; // v - verticeAtualU é u
+            int pesoVizinho = parVizinho.second; // peso[u, v]
+
+            int novoCusto = distD[verticeAtualU] + pesoVizinho;
+            if (novoCusto <= distD[vizinho] && novoCusto < limiteB) {
+                distD[vizinho] = novoCusto;
+
+                // Não precisa verificar se já está na fila
+                filaFronteiraH.push({ distD[vizinho], vizinho });
+            }
+        }
+    }
+    if (verticesCompletosU_0.size() <= maxContagemK) return std::make_pair(limiteB, verticesCompletosU_0);
+    else { 
+        // Encontrando a distancia maxima em U_0
+        int Blinha = -1; // não tem distancia negativa pelo artigo
+        for (int vertice : verticesCompletosU_0)
+            if (Blinha < distD[vertice]) Blinha = distD[vertice];
+        
+        // Construindo U para retorno(retirando vertices onde distancia < Blinha
+        std::vector<int> U;
+        for (int vertice : verticesCompletosU_0)
+            if (Blinha > distD[vertice]) U.push_back(vertice);
+
+        return std::make_pair(Blinha, U);
+    }
+}
